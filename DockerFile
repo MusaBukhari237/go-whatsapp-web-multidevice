@@ -1,23 +1,18 @@
-# Use the official Golang image
-FROM golang:1.20
-
-# Set the working directory in the container
-WORKDIR /app
-
-# Copy go.mod and go.sum files
-COPY go.mod go.sum ./
-
-# Download dependencies
-RUN go mod download
-
-# Copy the rest of the application code
-COPY . .
-
-# Build the Go application
-RUN go build -o app .
-
-# Expose the application port
-EXPOSE 8080
-
-# Run the application
-CMD ["./app"]
+services:
+    - name: whatsapp-go
+      type: web
+      env: docker
+      plan: free # Change to "starter" or higher for non-free plans
+      dockerfilePath: ./docker/golang.Dockerfile
+      buildCommand: "" # Optional, Render handles it for Docker
+      startCommand: "" # Optional, handled by Dockerfile's CMD
+      healthCheckPath: "/" # Optional, set the health check endpoint
+      autoDeploy: true
+      envVars:
+        - key: PORT
+          value: "3000"
+      docker:
+        image: aldinokemal2104/go-whatsapp-web-multidevice:latest
+      ports:
+        - port: 3000
+  
