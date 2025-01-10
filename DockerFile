@@ -1,23 +1,18 @@
-############################
-# STEP 1 build executable binary
-############################
-FROM golang:1.23-alpine3.20 AS builder
-RUN apk update && apk add --no-cache gcc musl-dev gcompat
-WORKDIR /whatsapp
-COPY ./src .
-
-# Fetch dependencies.
-RUN go mod download
-# Build the binary.
-RUN go build -o /app/whatsapp
-
-#############################
-## STEP 2 build a smaller image
-#############################
-FROM alpine:3.20
-RUN apk update && apk add --no-cache ffmpeg
-WORKDIR /app
-# Copy compiled from builder.
-COPY --from=builder /app/whatsapp /app/whatsapp
-# Run the binary.
-ENTRYPOINT ["/app/whatsapp"]
+services:
+    - name: whatsapp-go
+      type: web
+      env: docker
+      plan: free # Change to "starter" or higher for non-free plans
+      dockerfilePath: ./docker/golang.Dockerfile
+      buildCommand: "" # Optional, Render handles it for Docker
+      startCommand: "" # Optional, handled by Dockerfile's CMD
+      healthCheckPath: "/" # Optional, set the health check endpoint
+      autoDeploy: true
+      envVars:
+        - key: PORT
+          value: "3000"
+      docker:
+        image: aldinokemal2104/go-whatsapp-web-multidevice:latest
+      ports:
+        - port: 3000
+  
